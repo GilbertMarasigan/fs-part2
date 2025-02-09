@@ -39,8 +39,7 @@ const App = () => {
       personService
         .deletePerson(person.id)
         .then(returnedData => {
-          console.log('returnedData.id',returnedData.id)
-          setPersons(persons.filter(person => person.id !== returnedData.id))
+          setPersons(persons.filter(p => p.id !== person.id))
         })
     }
   }

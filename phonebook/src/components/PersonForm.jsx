@@ -1,7 +1,7 @@
 import { useState } from "react"
 import personService from "../services/persons"
 
-const PersonForm = ({ persons, setPersons, message, setMessage}) => {
+const PersonForm = ({ persons, setPersons, message, setMessage }) => {
 
     const [newName, setNewName] = useState('')
     const [newNumber, setNewNumber] = useState('')
@@ -30,8 +30,10 @@ const PersonForm = ({ persons, setPersons, message, setMessage}) => {
         // check for duplicates
         const matchedPerson = persons.find(person => person.name === newName)
 
+        console.log('matchedPerson', matchedPerson)
+
         if (matchedPerson) {
-            if(window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)){
+            if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
                 const updatePerson = {
                     ...matchedPerson,
                     number: newNumber
@@ -40,7 +42,7 @@ const PersonForm = ({ persons, setPersons, message, setMessage}) => {
                 personService
                     .replaceNumber(matchedPerson.id, updatePerson)
                     .then(returnedPerson => {
-                        setPersons(persons.map(person => 
+                        setPersons(persons.map(person =>
                             person.id === updatePerson.id
                                 ? returnedPerson : person
                         ))
@@ -48,8 +50,8 @@ const PersonForm = ({ persons, setPersons, message, setMessage}) => {
                         setNewNumber('')
                     })
                     .catch(error => {
-                        console.log('fail')
-                        setMessage(`${newName} was already deleted from server`)
+                        console.log(error)
+                        setMessage(error.response.data.error)
                         setTimeout(() => {
                             setMessage(null)
                         }, 5000)
@@ -73,7 +75,12 @@ const PersonForm = ({ persons, setPersons, message, setMessage}) => {
                         setMessage(null)
                     }, 5000)
                 })
-                
+                .catch(error => {
+                    // this is the way to access the error message
+                    console.log()
+                    setMessage(error.response.data.error)
+                })
+
         }
 
     }
